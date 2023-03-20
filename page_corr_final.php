@@ -59,8 +59,8 @@ $dis->get_articles();
         <lable>Название изобретения:</lable>
         <input type = "text" id="name" name = "name" pattern="[a-zA-Z0-9\s]+"><br/>
         <lable>Причина:</lable>
-        <input type = "radio" name = "denial" onclick="hideVak()">Недостаточная значимость</input>
-        <input type = "radio" name = "denial" onclick="showVak()">Плагиат</input>
+        <input type = "radio" value="significance" name = "denial" onclick="hideVak()">Недостаточная значимость</input>
+        <input type = "radio" value = "plagiarism" name = "denial" onclick="showVak()">Плагиат</input>
         <br/>
         <div id="fn" style="display: none;" hidden="hidden">Сообщить в ВАК?<input type="checkbox" name="vak" value= "rep"></input></div>
         <br/>

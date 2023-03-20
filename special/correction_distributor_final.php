@@ -120,9 +120,16 @@ class Correction_distributor{
             die("Invalid title");
         }
         $name = $_POST['name'];
-        $warning = $connection->prepare("INSERT INTO deletion VALUES(:t, date('y-m-d',(strtotime( date('y-m-d').' + 14 days')))");
-        $warning = $connection->bindValue('t',$name,PDO::PARAM_STR);
-        $warning ->execute();
+        $today = date('y-m-d');
+        $deletion_date = date('y-m-d',(strtotime($today.' + 14 days')));
+        $denial = $_POST['denial'];
+        $warning = $connection->prepare("INSERT INTO deletion VALUES(:t,:j,:k,3)");
+        $warning->bindParam('t',$name,PDO::PARAM_STR);
+        $warning->bindParam('j',$deletion_date,PDO::PARAM_STR);
+        if ($denial == "significance"){$warning->bindValue('k',"Недостаточная значимость",PDO::PARAM_STR); }
+        if ($denial == "plagiarism" and isset($_POST['vak'])){$warning->bindValue('k',"Плагиат/Информация передана в ВАК",PDO::PARAM_STR);}
+        elseif ($denial == "plagiarism" and !isset($_POST['vak'])){$warning->bindValue('k',"Плагиат",PDO::PARAM_STR);}
+        $warning -> execute();
         $updater = $connection->prepare('UPDATE version SET stat = -2 WHERE name =:t');
         $updater->bindValue('t',$name,PDO::PARAM_STR);
         $updater->execute();
