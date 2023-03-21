@@ -112,7 +112,19 @@ class Correction_distributor{
 
         }
     }
-    
+
+    function get_author_by_version_name($connection){
+        $connection->exec('LOCK TABLES send_recive WRITE,version WRITE');
+        $getter = $connection->prepare('SELECT id_a FROM send_recive
+        INNER JOIN version on  send_recive.id_ver = version.id
+        WHERE version.name = :t');
+        $getter->bindParam('t',$_POST['name'],PDO::PARAM_STR);
+        $getter->execute();
+        $res_array = $getter->fetchALL(PDO::FETCH_ASSOC);
+        $connection->exec('UNLOCK TABLES');
+        return $res_array;
+    }
+
     function remove($connection){
     if(isset($_POST["submit_bad"])){
         if(!preg_match("/^[a-zA-Z0-9\s]/", $_POST['name'])){
@@ -121,14 +133,15 @@ class Correction_distributor{
         }
         $name = $_POST['name'];
         $today = date('y-m-d');
-        $deletion_date = date('y-m-d',(strtotime($today.' + 14 days')));
         $denial = $_POST['denial'];
-        $warning = $connection->prepare("INSERT INTO deletion VALUES(:t,:j,:k,3)");
+        $author = $this->get_author_by_version_name($connection)[0]['id_a'];
+        $warning = $connection->prepare("INSERT INTO deletion VALUES(:t,:j,:k,:a)");
         $warning->bindParam('t',$name,PDO::PARAM_STR);
-        $warning->bindParam('j',$deletion_date,PDO::PARAM_STR);
+        $warning->bindParam('j',$today,PDO::PARAM_STR);
         if ($denial == "significance"){$warning->bindValue('k',"Недостаточная значимость",PDO::PARAM_STR); }
-        if ($denial == "plagiarism" and isset($_POST['vak'])){$warning->bindValue('k',"Плагиат/Информация передана в ВАК",PDO::PARAM_STR);}
+        if ($denial == "plagiarism" and isset($_POST['vak'])){$warning->bindValue('k',"Плагиат. Информация передана в ВАК",PDO::PARAM_STR);}
         elseif ($denial == "plagiarism" and !isset($_POST['vak'])){$warning->bindValue('k',"Плагиат",PDO::PARAM_STR);}
+        $warning->bindParam('a',$author,PDO::PARAM_INT);
         $warning -> execute();
         $updater = $connection->prepare('UPDATE version SET stat = -2 WHERE name =:t');
         $updater->bindValue('t',$name,PDO::PARAM_STR);

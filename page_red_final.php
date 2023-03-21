@@ -82,24 +82,23 @@ article_redactor_show($connection);
         </tr>
     </table>
 
-    <h3>Увидеть заполненность номеров номер</h3>
-    <form id="see_current_number" method="post">
-        <button type="submit" name="submit_new" value ="увидеть"></button>
+    <h3>Занятость корректоров</h3>
+    <form id="see_workload" method="post">
+        <button type="submit" name="submit_new" value ="проверить">Проверить</button>
     </form>
     <div id="res"></div>
     
     <script type ="text/javascript">
         $(document).ready(function() {
             //alert('I am here');
-            $('#see_current_number').on('submit',function(e)
+            $('#see_workload').on('submit',function(e)
             {
                 //alert('new');
                 e.preventDefault();
                 $.ajax({
                     
                     type: "POST",
-                    url: "youdidit_final.php",
-                    
+                    url: "corrector_check.php",
                     success: function(data){
                         $('#res').append(data);
                     }

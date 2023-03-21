@@ -1,12 +1,9 @@
 <?php
-
-$connection = new PDO("mysql:host= localhost; dbname=patent", 'root', '', array(
-    PDO::ATTR_EMULATE_PREPARES => false,
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,));
-
-$today = date('y-m-d');
-$date = date('y-m-d',(strtotime($today.' + 14 days')));
-$connection->exec('LOCK TABLES deletion WRITE');
-$warning = $connection->prepare("INSERT INTO deletion VALUES('guuug', '2023-04-05', 'cringe', 3)");
-$warning ->execute();
+include('special/config.php');
+$getter = $connection->prepare('SELECT * from plan_num');
+$getter->execute();
+$res_array = $getter->fetchALL(PDO::FETCH_ASSOC);
+for($i = 0; $i< count($res_array); $i++){
+    echo('<h3>'.$res_array[$i]['name'].' Заполнена?(0-нет 1 - да) '.$res_array[$i]['fulled'].'</h3>');
+}
 ?>

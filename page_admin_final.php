@@ -54,15 +54,32 @@ $dis = new Admin($connection,'admin');
         </tr>
     </table>
     
-    
-    
-    
-    <h3>Посмотрите на статьи и номера</h3>
-    <?php
-        $dis->show_numbers_and_articles_in_them();
-    ?>
-    <h3>Некоторая метаинформация по редакции</h3>
-    <?php
-        $dis->show_meta();
-    ?>
+
+    <h3>Занятость редакторов </h3>
+    <form id="see_workload" method="post">
+        <button type="submit" name="submit_new" value ="проверить">Проверить</button>
+    </form>
+    <div id="res"></div>
+
+    <script type ="text/javascript">
+        $(document).ready(function() {
+            //alert('I am here');
+            $('#see_workload').on('submit',function(e)
+            {
+                e.preventDefault();
+                $.ajax({
+
+                        type: "POST",
+                        url: "redactor_check.php",
+                        success: function(data){
+                            $('#res').append(data);
+                        }
+
+                    }
+
+                )
+            })
+
+        })
+    </script>
 </body>

@@ -109,7 +109,7 @@ $dis = new Author($connection,$_SESSION["session_username"]);
     </table>
 
     <table>
-        <tr><th>Ваши заявки</th><th>Предложения корректировки ваших заявок</th><th>Изобретения, на которые получили авторское свидетельство</th></tr>
+        <tr><th>Ваши заявки</th><th>Предложения корректировки заявок и описаний</th><th>Изобретения, на которые выдано авторское свидетельство</th><th>Отказано в патенте</th></tr>
         <tr>
         <td>
             <?php
@@ -125,6 +125,11 @@ $dis = new Author($connection,$_SESSION["session_username"]);
             <?php
             $dis->show_approved_versions();
             ?>
+        </td>
+        <td>
+           <?php
+           $dis->show_deleted_versions();
+           ?>
         </td>
     </tr>
     </table>

@@ -255,7 +255,7 @@ class Author{
     function show_last_version(){
         if (isset($this->name)){
             $getter = $this->con->prepare('SELECT name, approved, max(version_number) as version_number FROM version
-INNER JOIN send_recive ON send_recive.id_ver = version.id WHERE send_recive.sends = 1 AND approved IS NULL AND send_recive.id_a=:t GROUP BY name');
+            INNER JOIN send_recive ON send_recive.id_ver = version.id WHERE send_recive.sends = 1 AND approved IS NULL AND send_recive.id_a=:t GROUP BY name');
             $getter->bindValue('t', $this->get_author_by_name(), PDO::PARAM_INT);
             $result = $getter->execute();
             $res_array = $getter->fetchALL(PDO::FETCH_ASSOC);
@@ -266,19 +266,14 @@ INNER JOIN send_recive ON send_recive.id_ver = version.id WHERE send_recive.send
                     echo('<h3>'.$res_array[$i]['name']." Версия номер ".$res_array[$i]['version_number'].'</h3>');
                     echo('<p><a href="download_final.php?path=versions/'.$res_array[$i]['name'].$res_array[$i]['version_number'].$res_array[$i]['version_number'].'">Описание</a></p>');
                     echo('<p><a href="download_final.php?path=request/'.$res_array[$i]['name'].$res_array[$i]['version_number'].$res_array[$i]['version_number'].'">Заявка</a></p>');
-                    if($st>=10){
-                        echo('<h3>Статья будет отправлена в номер</h3>');
-
-                    }
-                    else{
-                        echo('<h3>Статью пока еще рассматривают</h3>');
-                    } 
+                    echo('<h3>Статья находится на рассмотрении</h3>');
 
                 }
             }
         }
 
     }
+
     function show_all_problems(){
         $this->con->exec('LOCK TABLES problem_list WRITE, version WRITE, author WRITE, send_recive WRITE');
         $getter = $this->con->prepare('SELECT problem_list.txt, version.name FROM problem_list INNER JOIN version ON version.id =  problem_list.id_ver WHERE problem_list.id_ver IN (SELECT id_ver as ver_id FROM send_recive WHERE id_a =:f AND sends=1)');
@@ -312,11 +307,32 @@ INNER JOIN send_recive ON send_recive.id_ver = version.id WHERE send_recive.send
         //echo('<tr><th>Название</th><th>Проблема</th></tr>');
         for($i =0;$i<count($res_array);$i++){
             echo("<h3>".$res_array[$i]["name"]."</h3>");
-                echo('<p><a href="download_final.php?path=approvals/'.$res_array[$i]['name'].'">Авторское свидетельство</a></p>');
+            echo('<p><a href="download_final.php?path=approvals/'.$res_array[$i]['name'].'">Авторское свидетельство</a></p>');
         }
         $this->con->exec('UNLOCK TABLES');
     }
-    
+    function show_deleted_versions(){
+        $this->con->exec('LOCK TABLES deletion WRITE, author WRITE');
+        $getter = $this->con->prepare('SELECT invention_name,reason, deletion_date FROM deletion WHERE id_a =:f');
+        $getter->bindValue('f',$this->get_author_by_name(),PDO::PARAM_INT);
+        $result = $getter->execute();
+        $res_array = $getter->fetchALL(PDO::FETCH_ASSOC);
+        //echo('<table>');
+        //echo('<tr><th>Название</th><th>Проблема</th></tr>');
+        //echo('<tr><th>Название</th><th>Проблема</th></tr>');
+        for($i =0;$i<count($res_array);$i++){
+            if (date('y-m-d')<=date('y-m-d',(strtotime($res_array[$i]["deletion_date"].' + 7 days')))) {
+                echo("<h3>" . $res_array[$i]["invention_name"] . "</h3>");
+                echo("<h3>" . 'Причина: ' . $res_array[$i]['reason'] . "</h3>");
+            }
+            else {
+                $deleter = $this->con->prepare('DELETE FROM deletion WHERE invention_name = :f');
+                $deleter->bindValue('f',$res_array[$i]["invention_name"],PDO::PARAM_INT);
+                $deleter->execute();
+            }
+        }
+        $this->con->exec('UNLOCK TABLES');
+    }
     function send_problems_to_corrector(){
         if (isset($_POST["submit1"]) and isset($_SESSION["session_username"])){
             //$this->con->beginTransaction();
