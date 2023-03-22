@@ -1,6 +1,6 @@
 <?php
 include('special/config_final.php');
-$getter = $connection->prepare('SELECT redactor.username, COUNT(version_redactor.id_ver) AS ct
+$getter = $connection->prepare('SELECT  redactor.username, COUNT(version_redactor.id_ver) AS ct
 FROM redactor
 LEFT JOIN version_redactor
 ON redactor.id = version_redactor.id_red
