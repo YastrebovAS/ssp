@@ -28,19 +28,6 @@ article_redactor_show($connection);
 <html>
  <head>
   <meta charset="utf-8">
-  <script>
-   function VAKappear() {
-    var str = document.getElementById("email").value;
-    var status = document.getElementById("status");
-    var re = /^[^\s()<>@,;:\/]+@\w[\w\.-]+\.[a-z]{2,}$/i;
-    if (re.test(str)) status.innerHTML = "Адрес правильный";
-      else status.innerHTML = "Адрес неверный";
-    if(isEmpty(str)) status.innerHTML = "Поле пустое";
-   }
-   function isEmpty(str){
-    return (str == null) || (str.length == 0);
-   }
-  </script>
  </head> 
 <body>
     <h3>В замечаниях используйте только заглавные и прописные Английские и Русские буквы и пробел</h3>
@@ -90,13 +77,13 @@ article_redactor_show($connection);
     
     <script type ="text/javascript">
         $(document).ready(function() {
-            //alert('I am here');
+            alert('I am here');
             $('#see_workload').on('submit',function(e)
             {
-                //alert('new');
+                alert('new');
                 e.preventDefault();
                 $.ajax({
-                    
+
                     type: "POST",
                     url: "corrector_check.php",
                     success: function(data){
@@ -107,7 +94,7 @@ article_redactor_show($connection);
 
                 )
             })
-            
+
         })
     </script>
 </body>

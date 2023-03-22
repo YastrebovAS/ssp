@@ -56,30 +56,13 @@ $dis = new Admin($connection,'admin');
     
 
     <h3>Занятость редакторов </h3>
-    <form id="see_workload" method="post">
+    <form id="see_red_workload" method="post">
         <button type="submit" name="submit_new" value ="проверить">Проверить</button>
     </form>
     <div id="res"></div>
+    <script>
 
-    <script type ="text/javascript">
-        $(document).ready(function() {
-            //alert('I am here');
-            $('#see_workload').on('submit',function(e)
-            {
-                e.preventDefault();
-                $.ajax({
+            alert("Hello World!");
 
-                        type: "POST",
-                        url: "redactor_check.php",
-                        success: function(data){
-                            $('#res').append(data);
-                        }
-
-                    }
-
-                )
-            })
-
-        })
-    </script>
+        </script>
 </body>
